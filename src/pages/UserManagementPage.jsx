@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { deleteUserApi, editUserApi, fetchUsersApi } from "../services/authAPI.jsx";
+import AdminNavBar from "./AdminNavBar.jsx";
 
 // Initial form state for editing
 const initialForm = {
@@ -84,6 +85,8 @@ export default function UsersPage() {
 
   return (
     <div className="container mt-4">
+
+      <AdminNavBar />
       <h2>User Management</h2>
             {/* Search Bar */}
       <input

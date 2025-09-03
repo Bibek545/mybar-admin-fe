@@ -6,6 +6,20 @@ import {
   deleteMenuItemApi,
 } from "../services/authAPI.jsx";
 import { Link } from "react-router-dom";
+import AdminNavBar from "./AdminNavBar.jsx";
+
+// Use the exact names you want to show on the site
+const CATEGORY_OPTIONS = [
+  "Lunch & Dinner",
+  "Banquets",
+  "Family Feast",
+  "Bar Snacks",
+  "Cocktails",
+  "Wines",
+  "Beer",
+  "Free From Booze",
+  "Happy Hour",
+];
 
 export const MenuPage = () => {
   const [menu, setMenu] = useState([]);
@@ -15,19 +29,17 @@ export const MenuPage = () => {
   const [form, setForm] = useState({
     _id: null,
     name: "",
-    category: "",
+    category: CATEGORY_OPTIONS[0],  // default to first option
     description: "",
     price: "",
     available: true,
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  // Fetch menu items on load
   useEffect(() => {
     fetchMenu();
   }, []);
 
-  // Fetch menu from API
   const fetchMenu = async () => {
     setLoading(true);
     setError("");
@@ -40,17 +52,10 @@ export const MenuPage = () => {
     setLoading(false);
   };
 
-  // Categories for filter
-  const categories = [
-    "All",
-    ...Array.from(new Set(menu.map((m) => m.category))),
-  ];
-
-  // Filter menu by category
+  // Filter list uses fixed categories (plus "All")
   const filteredMenu =
     filter === "All" ? menu : menu.filter((m) => m.category === filter);
 
-  // Handle form changes
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -59,19 +64,25 @@ export const MenuPage = () => {
     }));
   };
 
-  // Handle add or edit submit
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    const payload = {
+      ...form,
+      price: Number(form.price), // ensure number
+    };
+
     let res;
     if (isEditing) {
-      res = await editMenuItemApi(form._id, form);
+      res = await editMenuItemApi(form._id, payload);
     } else {
-      res = await addMenuItemApi(form);
+      res = await addMenuItemApi(payload);
     }
+
     if (res.status === "success") {
-      fetchMenu();
+      await fetchMenu();
       resetForm();
     } else {
       setError(res.message || "Failed to save menu item.");
@@ -79,31 +90,37 @@ export const MenuPage = () => {
     setLoading(false);
   };
 
-  // Edit handler
   const handleEdit = (item) => {
-    setForm(item);
+    // If old data has a category not in our list, fall back to first option
+    const safeCategory = CATEGORY_OPTIONS.includes(item.category)
+      ? item.category
+      : CATEGORY_OPTIONS[0];
+
+    setForm({
+      _id: item._id,
+      name: item.name || "",
+      category: safeCategory,
+      description: item.description || "",
+      price: item.price ?? "",
+      available: !!item.available,
+    });
     setIsEditing(true);
   };
 
-  // Delete handler
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     setLoading(true);
     const res = await deleteMenuItemApi(id);
-    if (res.status === "success") {
-      fetchMenu();
-    } else {
-      setError(res.message || "Failed to delete menu item.");
-    }
+    if (res.status === "success") await fetchMenu();
+    else setError(res.message || "Failed to delete menu item.");
     setLoading(false);
   };
 
-  // Reset form
   const resetForm = () => {
     setForm({
       _id: null,
       name: "",
-      category: "",
+      category: CATEGORY_OPTIONS[0],
       description: "",
       price: "",
       available: true,
@@ -113,12 +130,14 @@ export const MenuPage = () => {
 
   return (
     <div className="container mt-4">
+      <AdminNavBar />
       <h2>Menu Management</h2>
+
       {/* ADD / EDIT FORM */}
-      <div className="mb-4" style={{ maxWidth: 600 }}>
+      <div className="mb-4" style={{ maxWidth: 700 }}>
         <h5>{isEditing ? "Edit Menu Item" : "Add Menu Item"}</h5>
         <form onSubmit={handleFormSubmit} className="row g-2">
-          <div className="col-6">
+          <div className="col-md-6">
             <input
               type="text"
               className="form-control"
@@ -129,17 +148,24 @@ export const MenuPage = () => {
               required
             />
           </div>
-          <div className="col-6">
-            <input
-              type="text"
-              className="form-control"
+
+          <div className="col-md-6">
+            {/* Category dropdown (beginner friendly) */}
+            <select
+              className="form-select"
               name="category"
               value={form.category}
               onChange={handleFormChange}
-              placeholder="Category"
               required
-            />
+            >
+              {CATEGORY_OPTIONS.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
+
           <div className="col-12">
             <input
               type="text"
@@ -151,7 +177,8 @@ export const MenuPage = () => {
               required
             />
           </div>
-          <div className="col-4">
+
+          <div className="col-md-4">
             <input
               type="number"
               className="form-control"
@@ -164,7 +191,8 @@ export const MenuPage = () => {
               required
             />
           </div>
-          <div className="col-4 d-flex align-items-center">
+
+          <div className="col-md-4 d-flex align-items-center">
             <input
               type="checkbox"
               className="form-check-input me-2"
@@ -177,7 +205,8 @@ export const MenuPage = () => {
               Available
             </label>
           </div>
-          <div className="col-4">
+
+          <div className="col-md-4">
             <button className="btn btn-success" type="submit" disabled={loading}>
               {isEditing ? "Update" : "Add"}
             </button>
@@ -193,6 +222,7 @@ export const MenuPage = () => {
           </div>
         </form>
       </div>
+
       {/* Filter */}
       <div className="mb-3">
         <label>Filter by Category: </label>
@@ -201,15 +231,18 @@ export const MenuPage = () => {
           onChange={(e) => setFilter(e.target.value)}
           className="ms-2"
         >
-          {categories.map((cat) => (
+          <option value="All">All</option>
+          {CATEGORY_OPTIONS.map((cat) => (
             <option key={cat} value={cat}>
               {cat}
             </option>
           ))}
         </select>
       </div>
+
       {error && <div className="text-danger mb-2">{error}</div>}
       {loading && <div>Loading...</div>}
+
       {/* Table */}
       <table className="table table-striped">
         <thead>
@@ -217,7 +250,7 @@ export const MenuPage = () => {
             <th>Name</th>
             <th>Category</th>
             <th>Description</th>
-            <th>Price</th>
+            <th className="text-end">Price</th>
             <th>Available</th>
             <th>Actions</th>
           </tr>
@@ -235,7 +268,7 @@ export const MenuPage = () => {
                 <td>{item.name}</td>
                 <td>{item.category}</td>
                 <td>{item.description}</td>
-                <td>${Number(item.price).toFixed(2)}</td>
+                <td className="text-end">${Number(item.price).toFixed(2)}</td>
                 <td>{item.available ? "Yes" : "No"}</td>
                 <td>
                   <button
@@ -256,7 +289,8 @@ export const MenuPage = () => {
           )}
         </tbody>
       </table>
-       <Link to='/' className="btn btn-secondary"> Go Back</Link>
+
+      <Link to="/" className="btn btn-secondary">Go Back</Link>
     </div>
   );
 };

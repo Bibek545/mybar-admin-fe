@@ -7,17 +7,16 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { fetchReportStatsApi, logoutApi } from "../services/authAPI.jsx";
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../features/user/userSlice.js";
+import { fetchReportStatsApi } from "../services/authAPI.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import AdminNavBar from "./AdminNavBar.jsx";
 
 const COLORS = ["#D97B3F", "#10b981", "#3b82f6", "#f59e42", "#8884d8"]; // Brand & nice extras
 
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
 
@@ -37,45 +36,11 @@ export default function DashboardPage() {
       value: day.count,
     })) || [];
 
-  //logiing out
-  const handleOnLogout = () => {
-  localStorage.removeItem("accessJWT");
-  localStorage.removeItem("refreshJWT");
-  // Optionally, if you stored tokens in sessionStorage:
-  sessionStorage.removeItem("accessJWT");
-  sessionStorage.removeItem("refreshJWT");
- 
-  navigate('login');
-  };
 
   return (
     <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Welcome, Admin!</h1>
-        <button
-          onClick={handleOnLogout}
-          className="btn btn-outline-danger"
-          style={{ fontWeight: 500 }}
-          navigate
-        >
-          Logout
-        </button>
-      </div>
-      {/* Navigation buttons */}
-      <div className="d-flex gap-3 mb-4 mt-2 justify-content-center flex-wrap">
-        <a href="/booking" className="btn btn-outline-dark px-5">
-          View Bookings
-        </a>
-        <a href="/menu" className="btn btn-outline-dark px-5">
-          Manage Menu
-        </a>
-        <a href="/events" className="btn btn-outline-dark px-5">
-          Manage Events
-        </a>
-        <a href="/users" className="btn btn-outline-dark px-5">
-          Manage Users
-        </a>
-      </div>
+
+      <AdminNavBar />
 
       <hr className="mb-4" />
 

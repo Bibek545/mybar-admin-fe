@@ -9,6 +9,7 @@ import BookingsPage from '../pages/BookingsPage.jsx'
 import { MenuPage } from '../pages/MenuMangagementPage.jsx'
 import EventsPage from '../pages/EventManagementPage.jsx'
 import UsersPage from '../pages/UserManagementPage.jsx'
+import AdminUserPage from '../pages/adminUserPage.jsx'
 // import MenuPage from '../pages/MenuMangagementPage.jsx'
 
 const AppRoutes = () => {
@@ -51,6 +52,15 @@ const AppRoutes = () => {
         <ProtectedRoute>
             <DefaultLayout>
                 <UsersPage/>
+            </DefaultLayout>
+        </ProtectedRoute>
+    }
+    />
+
+    <Route path='/profile' element = {
+        <ProtectedRoute>
+            <DefaultLayout>
+                <AdminUserPage />
             </DefaultLayout>
         </ProtectedRoute>
     }
