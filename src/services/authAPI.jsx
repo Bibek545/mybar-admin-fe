@@ -235,4 +235,23 @@ export const fetchReportStatsApi = ()=> {
    isPrivateCall: true,
   };
   return apiProcessor(obj);
-}
+};
+
+export const getAdminProfile = () => {
+  const obj = {
+    url: authApiEP + "/admin-profile",
+    method: "get",
+    isPrivateCall: true,
+  };
+  return apiProcessor(obj);
+};
+
+export const updateAdminProfile = (payload) => {
+  const obj = {
+    url: authApiEP +  "/admin-profile",
+    method: "put",
+    isPrivateCall: true,
+    payload,
+  };
+  return apiProcessor(obj);
+};

@@ -57,7 +57,7 @@ const AppRoutes = () => {
     }
     />
 
-    <Route path='/profile' element = {
+    <Route path='/admin-profile' element = {
         <ProtectedRoute>
             <DefaultLayout>
                 <AdminUserPage />
@@ -69,4 +69,4 @@ const AppRoutes = () => {
   )
 }
 
-export default AppRoutes
+export default AppRoutes;

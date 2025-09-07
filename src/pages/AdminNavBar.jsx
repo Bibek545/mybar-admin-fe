@@ -42,7 +42,7 @@ const AdminNavBar = () => {
         <a href="/users" className="btn btn-outline-dark px-5">
           Manage Users
         </a>
-        <a href="/profile" className="btn btn-outline-dark px-5">
+        <a href="/admin-profile" className="btn btn-outline-dark px-5">
           Profile
         </a>
       </div>
