@@ -9,7 +9,7 @@ import BookingsPage from '../pages/BookingsPage.jsx'
 import { MenuPage } from '../pages/MenuMangagementPage.jsx'
 import EventsPage from '../pages/EventManagementPage.jsx'
 import UsersPage from '../pages/UserManagementPage.jsx'
-import AdminUserPage from '../pages/adminUserPage.jsx'
+import AdminUserPage from '../pages/AdminUserPage.jsx'
 // import MenuPage from '../pages/MenuMangagementPage.jsx'
 
 const AppRoutes = () => {
