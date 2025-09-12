@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing Node 20 on Amazon Linux 2023"
+      - curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+      - dnf install -y nodejs
+      # Ensure the new Node takes precedence over the preinstalled Node 18
+      - export PATH="/usr/bin:$PATH"
+      - hash -r
+      - node -v
+      - npm -v
+      - corepack enable
+      - corepack prepare yarn@1.22.22 --activate
+  pre_build:
+    commands:
+      - rm -f package-lock.json || true   # remove npm lockfile if present
+      - yarn install --frozen-lockfile || yarn install
+  build:
+    commands:
+      - yarn build
+
+artifacts:
+  files:
+    - "**/*"
+  discard-paths: no
+  base-directory: dist
