@@ -1,8 +1,8 @@
 import { apiProcessor } from "../services/api.jsx";
 
 // const apiBaseURL = "http://localhost:8040";
-const apiBaseURL = "http://thp-admin-be-env.eba-pejytbmb.ap-southeast-2.elasticbeanstalk.com";
-
+// const apiBaseURL = "http://thp-admin-be-env.eba-pejytbmb.ap-southeast-2.elasticbeanstalk.com";
+const apiBaseURL = "https://mybar-admin-be.onrender.com"
 const authApiEP = apiBaseURL + "/api/v1/admin/auth";
 
 export const loginAdminApi = async (payload) => {
